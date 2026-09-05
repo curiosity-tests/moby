@@ -290,6 +290,8 @@ jobs:
           observables_continue_on_error: false
           lfs: false
       - name: Assert instrumentation is live
+        # not the job's defaults.run.working-directory: that directory may not exist yet
+        working-directory: ${{ github.workspace }}
         if: env.CHALK_ON == 'true'
         run: |
           test -n "${CURIOSITY_ROOT:-}" || { echo "::error::CURIOSITY_ROOT unset - observables never installed"; exit 1; }
