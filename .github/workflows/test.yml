@@ -139,7 +139,7 @@ jobs:
             runnerSuffix: "-arm"
             extraModes: '[]'
     with:
-      chalk_on: ${{ github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline' }}
+      chalk_on: ${{ (github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline') && 'true' || 'false' }}
       profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
       arch: ${{ matrix.arch }}
       storage: ${{ matrix.storage }}
@@ -163,7 +163,7 @@ jobs:
           - arch: arm64
             runnerSuffix: "-arm"
     with:
-      chalk_on: ${{ github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline' }}
+      chalk_on: ${{ (github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline') && 'true' || 'false' }}
       profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
       arch: ${{ matrix.arch }}
       runnerSuffix: ${{ matrix.runnerSuffix }}
