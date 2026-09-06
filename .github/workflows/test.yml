@@ -36,7 +36,7 @@ on:
 env:
   # The one variable that separates the arms: on baseline, action-checkout
   # skips its Set up Chalk step entirely.
-  CHALK_ON: ${{ github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline' }}
+  CHALK_ON: ${{ inputs.leg == 'instrumented' }}
   GO_VERSION: "1.26.8"
   GIT_PAGER: "cat"
   PAGER: "cat"
@@ -116,7 +116,7 @@ jobs:
 
   test:
     name: test (${{ matrix.arch }}, ${{ matrix.storage }})
-    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
     needs:
       - build-dev
       - validate-dco
@@ -139,7 +139,7 @@ jobs:
             runnerSuffix: "-arm"
             extraModes: '[]'
     with:
-      chalk_on: ${{ (github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline') && 'true' || 'false' }}
+      chalk_on: ${{ inputs.leg == 'instrumented' && 'true' || 'false' }}
       profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
       arch: ${{ matrix.arch }}
       storage: ${{ matrix.storage }}
@@ -149,7 +149,7 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   test-unit:
-    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
     needs:
       - build-dev
       - validate-dco
@@ -163,7 +163,7 @@ jobs:
           - arch: arm64
             runnerSuffix: "-arm"
     with:
-      chalk_on: ${{ (github.event_name == 'workflow_dispatch' && inputs.leg != 'baseline') && 'true' || 'false' }}
+      chalk_on: ${{ inputs.leg == 'instrumented' && 'true' || 'false' }}
       profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
       arch: ${{ matrix.arch }}
       runnerSuffix: ${{ matrix.runnerSuffix }}
@@ -309,7 +309,7 @@ jobs:
   smoke-prepare:
     runs-on: ubuntu-26.04
     timeout-minutes: 10 # guardrails timeout for the whole job
-    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
     needs:
       - validate-dco
     outputs:
@@ -342,7 +342,7 @@ jobs:
   smoke:
     runs-on: ubuntu-26.04
     timeout-minutes: 20 # guardrails timeout for the whole job
-    if: ${{ github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
+    if: ${{ 'push' != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'ci/validate-only') }}
     needs:
       - smoke-prepare
     strategy:
